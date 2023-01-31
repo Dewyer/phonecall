@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2021"
 description = "A tiny easy to use helper that makes function calls through threads/ tasks easier with tokio channels "
 authors = ["Dewyer <dewyerer@gmail.com>"]
-documentation = "https://docs.rs/telephone"
+documentation = "https://docs.rs/phonecall"
 keywords = ["tokio", "multi-threading", "safe-calls", "channels"]
 license = "MIT"
-repository = "https://github.com/Dewyer/telephone"
+repository = "https://github.com/Dewyer/phonecall"
 
 [dependencies]
 tokio = { version = "1.5.0", features = ["sync"] }
