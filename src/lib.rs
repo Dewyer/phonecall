@@ -3,7 +3,6 @@
 
 use crate::error::Error;
 use std::{fmt::Debug, marker::PhantomData};
-use tokio::sync::mpsc;
 
 #[macro_use]
 pub mod macros;
@@ -121,3 +120,6 @@ impl<Call: CallCenter> Phone<Call> {
         Ok(())
     }
 }
+
+// Re export tokio
+pub use tokio::sync::mpsc as mpsc;

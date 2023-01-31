@@ -12,14 +12,14 @@ macro_rules! call_center {
 
         $crate::as_item! {
             #[derive(Debug, Clone)]
-            pub enum $enum_name { $($body(<$body as TelephoneOperation>::Parameters,tokio::sync::mpsc::Sender<<$body as TelephoneOperation>::ReturnValue>),)* }
+            pub enum $enum_name { $($body(<$body as TelephoneOperation>::Parameters,$crate::mpsc::Sender<<$body as TelephoneOperation>::ReturnValue>),)* }
         }
 
         $(impl $crate::MakeCallOn<$call_center> for $body {
             const NAME: &'static str = stringify!($enum_name::$body);
 
-            fn make_call(request: Self::Parameters) -> ($enum_name, tokio::sync::mpsc::Receiver<Self::ReturnValue>) {
-                let (tx, rx) = tokio::sync::mpsc::channel(1);
+            fn make_call(request: Self::Parameters) -> ($enum_name, $crate::mpsc::Receiver<Self::ReturnValue>) {
+                let (tx, rx) = $crate::mpsc::channel(1);
 
                 (
                     $enum_name::$body(request, tx),
