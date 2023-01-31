@@ -1,3 +1,9 @@
+/// Helper macro for creating call centers from operations
+/// Example usage:
+/// ```rust
+/// phonecall::call_center!(SimpleCallCenter, SimpleTelephoneCall { Ping, HelloWorld });
+/// ```
+/// This will declare the `SimpleCallCenter` struct and `SimpleTelephoneCall` enum and will implement the necessary traits.
 #[macro_export]
 macro_rules! call_center {
     ($call_center:ident, $enum_name:ident { $($body:ident),*$(,)* }) => {
@@ -29,6 +35,20 @@ macro_rules! call_center {
     };
 }
 
+/// Helper macro for easily consuming calls that come from a call handler
+/// Example usage:
+/// ```rust
+/// phonecall::call_center_handlers!(
+//     handler,
+//     (),
+//     SimpleTelephoneCall
+//     {
+//         Ping => handle_ping,
+//         HelloWorld => handle_hello_world,
+//     }
+// );
+/// ```
+/// Where the second argument is a context providing struct
 #[macro_export]
 macro_rules! call_center_handlers {
     ($handler_name:ident, $ctx_name:tt, $enum_name:ident { $($operation:ident => $handler_fn:tt),*$(,)* }) => {
@@ -43,6 +63,7 @@ macro_rules! call_center_handlers {
     };
 }
 
+/// Type coersion, ignore
 #[macro_export]
 macro_rules! as_item {
     ($i:item) => {
