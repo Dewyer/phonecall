@@ -2,11 +2,15 @@
 //! For an example check `cargo run --example simple` at `examples/simple.rs`
 
 use crate::error::Error;
+pub use broadcast::*;
+pub use broadcast_center::*;
 use std::{fmt::Debug, marker::PhantomData};
 
 #[macro_use]
 pub mod macros;
 
+pub mod broadcast;
+pub mod broadcast_center;
 pub mod error;
 
 #[cfg(test)]
@@ -57,7 +61,7 @@ impl<Call: CallCenter> TelephoneCenter<Call> {
     }
 
     pub async fn handle_request(&mut self) -> Result<Call::CallEnum, Error> {
-        self.rx.recv().await.ok_or(Error::Unknown)
+        self.rx.recv().await.ok_or(Error::PhoneClosed)
     }
 }
 
@@ -74,6 +78,10 @@ pub struct Phone<Call: CallCenter> {
 }
 
 impl<Call: CallCenter> Phone<Call> {
+    pub(crate) fn is_alive(&self) -> bool {
+        !self.tx.is_closed()
+    }
+
     /// Does a blocking call to the call center
     pub async fn call<Operation>(
         &self,
@@ -90,9 +98,9 @@ impl<Call: CallCenter> Phone<Call> {
         );
 
         let (req, mut recv) = Operation::make_call(parameters);
-        self.tx.send(req).await.map_err(|_| Error::Unknown)?;
+        self.tx.send(req).await.map_err(|_| Error::PhoneClosed)?;
 
-        let resp = recv.recv().await.ok_or(Error::Unknown)?;
+        let resp = recv.recv().await.ok_or(Error::PhoneClosed)?;
 
         #[cfg(feature = "tracing")]
         tracing::trace!("response on ::{}({:?})", Operation::NAME, &resp);
@@ -115,11 +123,11 @@ impl<Call: CallCenter> Phone<Call> {
         );
 
         let (req, _) = Operation::make_call(parameters);
-        self.tx.send(req).await.map_err(|_| Error::Unknown)?;
+        self.tx.send(req).await.map_err(|_| Error::PhoneClosed)?;
 
         Ok(())
     }
 }
 
 // Re export tokio
-pub use tokio::sync::mpsc as mpsc;
+pub use tokio::sync::mpsc;

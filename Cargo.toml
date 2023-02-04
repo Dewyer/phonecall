@@ -1,6 +1,6 @@
 [package]
 name = "phonecall"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "A tiny easy to use helper that makes function calls through threads/ tasks easier with tokio channels "
 authors = ["Dewyer <dewyerer@gmail.com>"]
@@ -11,15 +11,16 @@ repository = "https://github.com/Dewyer/phonecall"
 readme = "README.md"
 
 [dependencies]
-tokio = { version = "1.5.0", features = ["sync"] }
+tokio = { version = "1.5.0", features = ["sync", "time"] }
 tracing = { version="0.1.37", optional=true }
 thiserror = "1.0"
+futures = "0.3.25"
 
 [dev-dependencies]
-futures = "0.3.25"
 chrono = "0.4.23"
 tokio = { version = "1.5.0", features = ["sync", "full"] }
 anyhow = "1.0.68"
+lazy_static = "1.4.0"
 
 [features]
 default = []
