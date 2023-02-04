@@ -1,9 +1,9 @@
 use crate::{Broadcast, CallCenter, MakeCallOn, Phone, TelephoneOperation};
 use std::{collections::HashMap, hash::Hash, sync::Arc};
-use tokio::sync::RwLock;
+use tokio::sync::{RwLock, RwLockWriteGuard};
 
 pub struct BroadcastCenter<Cc: CallCenter, Top: PartialEq + Clone + Hash + Eq> {
-    pub broadcasts: Arc<RwLock<HashMap<Top, Broadcast<Cc>>>>,
+    broadcasts: Arc<RwLock<HashMap<Top, Broadcast<Cc>>>>,
 }
 
 impl<Cc: CallCenter, Top: PartialEq + Clone + Hash + Eq> Default for BroadcastCenter<Cc, Top> {
@@ -19,12 +19,18 @@ impl<Cc: CallCenter, Top: PartialEq + Clone + Hash + Eq> BroadcastCenter<Cc, Top
         }
     }
 
+    fn clean_broadcasts(rwlock: &mut RwLockWriteGuard<HashMap<Top, Broadcast<Cc>>>) {
+        rwlock.retain(|_, brc| !brc.is_empty());
+    }
+
     /// Attaches a phone to the broadcast center for a specific topic
     pub async fn attach_to_broadcast(&self, topic: Top, phone: Phone<Cc>) {
         let mut broadcasts = self.broadcasts.write().await;
         let for_topic = broadcasts.entry(topic).or_insert(Default::default());
 
         for_topic.attach_phone(phone);
+
+        Self::clean_broadcasts(&mut broadcasts);
     }
 
     /// Calls all and any alive phones that are attached to a given topic

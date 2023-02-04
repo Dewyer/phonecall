@@ -15,6 +15,10 @@ impl<Cc: CallCenter> Broadcast<Cc> {
         Self { phones: vec![] }
     }
 
+    pub(crate) fn is_empty(&self) -> bool {
+        self.phones.is_empty()
+    }
+
     fn clear_dead_phones(&mut self) {
         self.phones.retain(|ph| ph.is_alive())
     }

@@ -1,6 +1,6 @@
 [package]
 name = "phonecall"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 description = "A tiny easy to use helper that makes function calls through threads/ tasks easier with tokio channels "
 authors = ["Dewyer <dewyerer@gmail.com>"]
