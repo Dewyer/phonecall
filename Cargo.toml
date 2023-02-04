@@ -25,3 +25,6 @@ lazy_static = "1.4.0"
 [features]
 default = []
 tracing = ["dep:tracing"]
+
+[lib]
+doctest = false

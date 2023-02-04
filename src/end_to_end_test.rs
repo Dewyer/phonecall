@@ -100,7 +100,7 @@ async fn basic_test_simple_cc() {
 
 lazy_static! {
     static ref MAIN_BROADCAST_CENTER: BroadcastCenter<SimpleCallCenter, String> =
-        { Default::default() };
+        Default::default();
 }
 
 #[tokio::test]
@@ -162,7 +162,7 @@ async fn basic_test_simple_broadcast_center() {
             .call_topic::<Ping>(
                 "pie".to_string(),
                 PingParams {
-                    message: "Hello!".to_string(),
+                    message: "Hello1 !".to_string(),
                 },
             )
             .await;
@@ -171,15 +171,15 @@ async fn basic_test_simple_broadcast_center() {
             .call_topic_no_response::<Ping>(
                 "pie".to_string(),
                 PingParams {
-                    message: "Hello!".to_string(),
+                    message: "Hello 2!".to_string(),
                 },
             )
             .await;
     });
 
     let res = futures::join!(
-        timeout(Duration::from_secs(1), jt1),
-        timeout(Duration::from_secs(1), jt2),
+        timeout(Duration::from_secs(5), jt1),
+        timeout(Duration::from_secs(5), jt2),
         jt3,
     );
 

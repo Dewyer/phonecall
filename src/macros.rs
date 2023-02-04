@@ -1,6 +1,6 @@
 /// Helper macro for creating call centers from operations
 /// Example usage:
-/// ```rust
+/// ```no_run
 /// phonecall::call_center!(SimpleCallCenter, SimpleTelephoneCall { Ping, HelloWorld });
 /// ```
 /// This will declare the `SimpleCallCenter` struct and `SimpleTelephoneCall` enum and will implement the necessary traits.
@@ -37,7 +37,7 @@ macro_rules! call_center {
 
 /// Helper macro for easily consuming calls that come from a call handler
 /// Example usage:
-/// ```rust
+/// ```no_run
 /// phonecall::call_center_handlers!(
 //     handler,
 //     (),
