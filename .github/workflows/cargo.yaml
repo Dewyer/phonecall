@@ -23,3 +23,62 @@ jobs:
         with:
           command: fmt
           args: --all -- --check
+  clippy:
+    strategy:
+      matrix:
+        rust-version:
+          - stable
+          - nightly
+      fail-fast: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust-version }}
+          override: true
+          components: clippy
+      - uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --all --all-targets -- -D warnings
+
+  test:
+    strategy:
+      matrix:
+        rust-version:
+          - stable
+          - nightly
+      fail-fast: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust-version }}
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all
+
+  check-example:
+    strategy:
+      matrix:
+        rust-version:
+          - stable
+          - nightly
+        example:
+          - simple
+      fail-fast: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust-version }}
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --example ${{ matrix.example }}
