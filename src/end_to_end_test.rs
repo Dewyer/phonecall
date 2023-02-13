@@ -39,27 +39,24 @@ async fn basic_test_simple_cc() {
             loop {
                 let next_call = center.handle_request().await.unwrap();
 
-                match next_call {
-                    SimpleTelephoneCall::Ping(params, resp) => {
-                        resp.send(()).await.unwrap();
+                if let SimpleTelephoneCall::Ping(params, resp) = next_call {
+                    resp.send(()).await.unwrap();
 
-                        cc += 1;
+                    cc += 1;
 
-                        match cc {
-                            1 => {
-                                assert_eq!(&params.message, "Hi!")
-                            }
-                            2 => {
-                                assert_eq!(&params.message, "Hello bello!")
-                            }
-                            _ => {}
+                    match cc {
+                        1 => {
+                            assert_eq!(&params.message, "Hi!")
                         }
-
-                        if cc == 2 {
-                            break;
+                        2 => {
+                            assert_eq!(&params.message, "Hello bello!")
                         }
+                        _ => {}
                     }
-                    _ => {}
+
+                    if cc == 2 {
+                        break;
+                    }
                 }
             }
         })
@@ -68,27 +65,23 @@ async fn basic_test_simple_cc() {
     let jt2 = tokio::spawn(async move {
         tokio::time::sleep(Duration::from_secs(1)).await;
 
-        let resp = phone_one
+        phone_one
             .call::<Ping>(PingParams {
                 message: "Hi!".to_string(),
             })
             .await
             .unwrap();
-
-        dbg!(resp);
     });
 
     let jt3 = tokio::spawn(async move {
         tokio::time::sleep(Duration::from_secs(3)).await;
 
-        let resp = phone_two
+        phone_two
             .call::<Ping>(PingParams {
                 message: "Hello bello!".to_string(),
             })
             .await
             .unwrap();
-
-        dbg!(resp);
     });
 
     let res = futures::future::join_all([jt1, jt2, jt3]).await;
@@ -123,15 +116,12 @@ async fn basic_test_simple_broadcast_center() {
             loop {
                 let next_call = center.handle_request().await.unwrap();
 
-                match next_call {
-                    SimpleTelephoneCall::Ping(_params, resp) => {
-                        resp.send(()).await.ok();
-                        cc += 1;
-                        if cc == 2 {
-                            break;
-                        }
+                if let SimpleTelephoneCall::Ping(_params, resp) = next_call {
+                    resp.send(()).await.ok();
+                    cc += 1;
+                    if cc == 2 {
+                        break;
                     }
-                    _ => {}
                 }
             }
         })
@@ -144,15 +134,12 @@ async fn basic_test_simple_broadcast_center() {
         loop {
             let next_call = center.handle_request().await.unwrap();
 
-            match next_call {
-                SimpleTelephoneCall::Ping(_params, resp) => {
-                    resp.send(()).await.ok();
-                    cc += 1;
-                    if cc == 2 {
-                        break;
-                    }
+            if let SimpleTelephoneCall::Ping(_params, resp) = next_call {
+                resp.send(()).await.ok();
+                cc += 1;
+                if cc == 2 {
+                    break;
                 }
-                _ => {}
             }
         }
     });
