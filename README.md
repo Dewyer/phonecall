@@ -7,3 +7,9 @@ A small tokio based library that makes async function calls through tasks and th
 
 ## How to use
 A simple example is available in the [examples directory](https://github.com/Dewyer/phonecall/blob/main/examples/simple.rs).
+
+
+You can run an example with:
+```bash
+cargo run --example simple
+```
